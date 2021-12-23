@@ -1,19 +1,19 @@
-import Vue from 'vue';
-import VueRouter from 'vue-router';
+import Vue from 'vue'
+import VueRouter from 'vue-router'
 
-import Home from '@/views/home/index.vue';
+import Home from '@/views/Home'
 
-Vue.use(VueRouter);
+Vue.use(VueRouter)
 
 // 处理异常问题
-const originalPush = VueRouter.prototype.push;
-const originalReplace = VueRouter.prototype.replace;
+const originalPush = VueRouter.prototype.push
+const originalReplace = VueRouter.prototype.replace
 VueRouter.prototype.push = function (location) {
-  return originalPush.call(this, location).catch((err) => err);
-};
+  return originalPush.call(this, location).catch(err => err)
+}
 VueRouter.prototype.replace = function (location) {
-  return originalReplace.call(this, location).catch((err) => err);
-};
+  return originalReplace.call(this, location).catch(err => err)
+}
 
 const routes = [
   {
@@ -21,15 +21,15 @@ const routes = [
     name: 'home',
     component: Home,
   },
-];
+]
 
 const router = new VueRouter({
   routes,
-});
+})
 
 router.beforeEach(async (to, from, next) => {
-  document.title = '肖肖';
-  next();
-});
+  document.title = '肖肖'
+  next()
+})
 
-export default router;
+export default router
