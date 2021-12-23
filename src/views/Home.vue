@@ -1,5 +1,5 @@
 <template>
-  <div class="home">
+  <div class="w-screen h-screen overflow-auto py-54">
     <van-nav-bar
       title="聊天室"
       @click-right="onClickRight"
@@ -26,11 +26,4 @@ export default {
   },
 }
 </script>
-<style lang="less" scoped>
-.home {
-  width: 100vw;
-  height: 100vh;
-  overflow: auto;
-  padding: 54px 0;
-}
-</style>
+<style lang="less" scoped></style>
