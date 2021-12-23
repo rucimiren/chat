@@ -1,6 +1,7 @@
 <template>
   <div class="home">
-    <img alt="Vue logo" src="../assets/logo.png" />
+    <van-button type="primary">主要按钮</van-button>
+    <div class="hello text-error">你好</div>
   </div>
 </template>
 
@@ -9,3 +10,8 @@ export default {
   name: 'Home',
 }
 </script>
+<style lang="less" scoped>
+.hello {
+  font-size: 20px;
+}
+</style>
