@@ -11,20 +11,20 @@ module.exports = {
   //     .options({ remUnit: 37.5 })
   //     .end()
   // },
-  css: {
-    loaderOptions: {
-      postcss: {
-        plugins: [
-          require('tailwindcss')(),
-          require('autoprefixer')({
-            overrideBrowserslist: require('./package.json').browserslist,
-          }),
-          require('postcss-pxtorem')({
-            rootValue: 37.5,
-            propList: ['*'],
-          }),
-        ],
-      },
-    },
-  },
+  // css: {
+  //   loaderOptions: {
+  //     postcss: {
+  //       plugins: [
+  //         require('tailwindcss')(),
+  //         require('autoprefixer')({
+  //           overrideBrowserslist: require('./package.json').browserslist,
+  //         }),
+  //         require('postcss-pxtorem')({
+  //           rootValue: 37.5,
+  //           propList: ['*'],
+  //         }),
+  //       ],
+  //     },
+  //   },
+  // },
 }

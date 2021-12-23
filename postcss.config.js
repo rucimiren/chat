@@ -9,7 +9,7 @@ module.exports = {
       propList: ['*'],
     },
   }, */
-  /*  plugins: [
+  plugins: [
     require('tailwindcss')(),
     require('autoprefixer')({
       overrideBrowserslist: require('./package.json').browserslist,
@@ -18,5 +18,5 @@ module.exports = {
       rootValue: 37.5,
       propList: ['*'],
     }),
-  ], */
+  ],
 }
