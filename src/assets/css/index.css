@@ -1,5 +1,13 @@
+@font-face {
+  font-family: 'font-zqdnhs';
+  font-display: swap;
+  src: url('//storage.360buyimg.com/activity-static/jxd/own-use/fonts/zqdnhs.TTF')
+    format('truetype');
+}
+
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  font-family: font-zqdnhs;
 }

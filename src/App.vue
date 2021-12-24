@@ -4,4 +4,9 @@
   </div>
 </template>
 
-<style lang="less"></style>
+<style lang="less">
+#app {
+  max-width: 375px;
+  margin: 0 auto;
+}
+</style>
