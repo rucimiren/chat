@@ -27,4 +27,20 @@ module.exports = {
   //     },
   //   },
   // },
+  devServer: {
+    disableHostCheck: true,
+    port: 8080,
+    proxy: {
+      '/socket.io': {
+        target: 'http://10.13.156.112:3000',
+        changeOrigin: true,
+        ws: true,
+      },
+      '/sockjs-node': {
+        target: 'http://10.13.156.112:3000',
+        changeOrigin: true,
+        ws: true,
+      },
+    },
+  },
 }
