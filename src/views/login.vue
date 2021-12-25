@@ -1,14 +1,24 @@
 <template>
-  <div class="flex justify-center items-center h-screen">
-    <van-form @submit="onSubmit" class="w-10/12 shadow-md">
+  <div class="flex justify-center items-center h-screen bg-black-f4">
+    <van-form @submit="onSubmit" class="w-10/12 shadow-md bg-white rounded-6">
       <van-field
+        class="rounded-6 text-20"
         v-model="username"
-        name="用户名"
-        label="用户名"
-        placeholder="用户名"
-        :rules="[{ required: true, message: '请填写用户名' }]"
+        name="username"
+        placeholder="请输入昵称"
+        :rules="[{ required: true, message: '请输入昵称' }]"
       />
-      <div style="margin: 16px">
+      <van-cell-group :border="false" title="请上传头像">
+        <van-field
+          name="uploader"
+          :rules="[{ required: true, message: '请选择头像' }]"
+        >
+          <template #input>
+            <van-uploader :max-count="1" v-model="uploader" />
+          </template>
+        </van-field>
+      </van-cell-group>
+      <div class="m-16">
         <van-button round block type="info" class="text-20" native-type="submit"
           >提交</van-button
         >
@@ -18,29 +28,67 @@
 </template>
 
 <script>
-import io from 'socket.io'
 export default {
   name: 'login',
 
   data() {
     return {
       username: '',
-      socket: null,
+      uploader: [],
+      chatUserInfo: {
+        username: '',
+        avatar: '',
+      },
     }
   },
 
-  mounted() {},
+  created() {
+    this.init()
+  },
 
   methods: {
     init() {
-      this.socket = io('http://localhost:3000')
+      this.loginError()
+      this.loginSuccess()
     },
     onSubmit(values) {
-      console.log('submit', values)
-      this.socket.emit('login', { username: this.username })
+      this.chatUserInfo = {
+        username: values.username,
+        avatar: values.uploader[0].content,
+      }
+      window.socket.emit('login', this.chatUserInfo)
+    },
+    loginError() {
+      window.socket.on('loginError', () => {
+        this.$toast.fail({
+          message: '昵称已被使用，请更换昵称',
+          duration: 3000,
+        })
+      })
+    },
+    loginSuccess() {
+      window.socket.on('loginSuccess', () => {
+        window.localStorage.setItem(
+          'chatUserInfo',
+          JSON.stringify(this.chatUserInfo),
+        )
+        window.chat_user_id = true
+        this.$toast({
+          type: 'success',
+          message: '登录成功',
+          duration: 3000,
+          onOpened: () => {
+            this.$router.replace('/')
+          },
+        })
+      })
     },
   },
 }
 </script>
 
-<style lang="less" scoped></style>
+<style lang="less" scoped>
+/deep/ .van-field__error-message {
+  font-size: 18px;
+}
+</style>

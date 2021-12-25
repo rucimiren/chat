@@ -17,6 +17,7 @@
     >
       <!-- your message start -->
       <div class="chat-message-box-your" style="display: none">
+        <!-- <div class="chat-message-box-your"> -->
         <div class="">
           <img
             class="w-40 h-40 rounded-4"
@@ -25,31 +26,33 @@
           />
         </div>
         <div class="ml-8">
-          <div class="text-14 text-black-f65">小明小花</div>
+          <div class="text-14 text-black-f65">小明小花小明小花</div>
           <div
-            class="text-18 bg-white mt-4 pl-4 pr-8 py-6 rounded-2 relative break-all shadow-sm min-h-32"
+            class="text-18 inline-block bg-white mt-4 pl-4 pr-8 py-6 rounded-2 relative break-all shadow-sm min-h-32"
           >
             <van-icon
               name="play"
               class="absolute text-12 transform rotate-180 -left-8 top-6 text-white"
             />
-            小明小花小明小明小花小明小明小花小明小明小花小明
+            <!-- 小明小花小明小明小花小明小明小花小明小明小花小明 -->
+            ni
           </div>
         </div>
       </div>
       <!-- your message end -->
       <!-- user message start -->
       <div class="chat-message-box-user" style="display: none">
-        <div class="mr-8 flex-1">
-          <div class="text-14 text-black-f65 text-right">小明小花</div>
+        <!-- <div class="chat-message-box-user" style=""> -->
+        <div class="mr-8 flex-1 text-right">
+          <div class="text-14 text-black-f65">小明小花小明小花</div>
           <div
-            class="text-18 bg-white mt-4 pr-4 pl-8 py-6 rounded-2 relative break-all shadow-sm min-h-32"
+            class="inline-block text-18 bg-white mt-4 text-left pr-4 pl-8 py-6 rounded-2 relative break-all shadow-sm min-h-32"
           >
             <van-icon
               name="play"
               class="absolute text-12 -right-8 top-6 text-white"
             />
-            小明小花小明小小小明小花小明小小小明小花小明小
+            <!-- 小明小花小明小小小明小花小明小小小明小花小明小 ni -->
           </div>
         </div>
         <div class="">
@@ -61,6 +64,13 @@
         </div>
       </div>
       <!-- user message end -->
+      <!-- login and logout message start -->
+      <div>
+        <span class="text-16 block py-4 text-center text-gray-7"
+          >user已上线群聊</span
+        >
+      </div>
+      <!-- login and logout message end -->
     </div>
 
     <div class="chat-footer">
@@ -97,16 +107,20 @@ export default {
   data() {
     return {
       message: '',
+      chatUserInfo: {
+        username: '',
+        avatar: '',
+      },
     }
   },
   async created() {
     await this.$nextTick()
-    // console.log(window.socket, 'window.socket')
     this.init()
     autosize(this.$refs.textarea)
   },
   methods: {
     init() {
+      this.getChatUserInfo()
       this.receiveMessage()
     },
     receiveMessage() {
@@ -115,15 +129,15 @@ export default {
         data.message = data.message.replace(/\n/g, '<br/>')
         console.log(data)
         // 判断消息是否是自己发送的
-        if (data.username === this.username) {
+        if (data.username === this.chatUserInfo.username) {
           // 自己发送的消息
           const child = document.createElement('div')
           child.setAttribute('class', 'chat-message-box-user')
           child.innerHTML = `
-            <div class="mr-8 flex-1">
-              <div class="text-14 text-black-f65 text-right">小明小花</div>
+            <div class="mr-8 flex-1 text-right">
+              <div class="text-14 text-black-f65 text-right">${data.username}</div>
               <div
-                class="text-18 bg-white mt-4 pr-4 pl-8 py-6 rounded-2 relative break-all shadow-sm min-h-32"
+                class="text-18 inline-block text-left bg-white mt-4 pr-4 pl-8 py-6 rounded-2 relative break-all shadow-sm min-h-32"
               >
                 <i class="absolute text-12 -right-8 top-6 text-white van-icon van-icon-play"></i>
                 ${data.message}
@@ -132,7 +146,7 @@ export default {
             <div class="">
               <img
                 class="w-40 h-40 rounded-4"
-                src="//storage.360buyimg.com/activity-static/jxd/both-year/h5-bg.png"
+                src=${data.avatar}
                 alt=""
               />
             </div>
@@ -146,16 +160,16 @@ export default {
             <div class="">
               <img
                 class="w-40 h-40 rounded-4"
-                src="//storage.360buyimg.com/activity-static/jxd/both-year/h5-bg.png"
+                src=${data.avatar}
                 alt=""
               />
             </div>
             <div class="ml-8">
-              <div class="text-14 text-black-f65">小明小花</div>
+              <div class="text-14 text-black-f65">${data.username}</div>
               <div
                 class="text-18 bg-white mt-4 pl-4 pr-8 py-6 rounded-2 relative break-all shadow-sm min-h-32"
               >
-                <i class="absolute text-12 transform rotate-180 -left-8 top-6 text-white van-icon van-icon-play"></i>
+                <i class="absolute inline-block text-12 transform rotate-180 -left-8 top-6 text-white van-icon van-icon-play"></i>
                 ${data.message}
               </div>
             </div>
@@ -170,9 +184,9 @@ export default {
         // 发送给socket服务器
         const message = this.message
         this.message = ''
+        console.log(window.socket)
         window.socket.emit('chatMessage', {
-          // username: username,
-          // avatar: avatar,
+          ...this.chatUserInfo,
           message,
         })
       }
@@ -185,6 +199,10 @@ export default {
     },
     onClickRight() {
       console.log('按钮')
+    },
+    getChatUserInfo() {
+      const chatUserInfo = window.localStorage.getItem('chatUserInfo')
+      this.chatUserInfo = JSON.parse(chatUserInfo)
     },
   },
 }

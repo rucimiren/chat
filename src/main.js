@@ -9,12 +9,25 @@ import '@/assets/css/index.css'
 const io = require('socket.io/client-dist/socket.io.js')
 window.socket = io('http://localhost:3000')
 
-import { Button, NavBar, Icon, Field, Cell, CellGroup, Form } from 'vant'
+import {
+  Button,
+  NavBar,
+  Icon,
+  Field,
+  Cell,
+  CellGroup,
+  Form,
+  Uploader,
+  Toast,
+} from 'vant'
 
 // 常用的组件
-;[Button, NavBar, Icon, Field, Cell, CellGroup, Form].forEach(comp => {
-  Vue.component(comp.name, comp)
-})
+;[Button, NavBar, Icon, Field, Cell, CellGroup, Form, Uploader].forEach(
+  comp => {
+    Vue.component(comp.name, comp)
+  },
+)
+Vue.prototype.$toast = Toast
 
 Vue.config.productionTip = false
 

@@ -29,6 +29,7 @@ io.on('connection', socket => {
   // console.log(socket)
   // 注册登录事件
   socket.on('login', data => {
+    console.log(data.username, 'login')
     // 判断该用户是否已经存在了
     const user = users.find(item => item.username === data.username)
     if (user) {
@@ -54,7 +55,7 @@ io.on('connection', socket => {
 
   // 处理聊天请求
   socket.on('chatMessage', data => {
-    console.log(data, 'chatMessage')
+    console.log(data.message, data.username, 'chatMessage')
     // 直接广播给所有人
     io.emit('receiveMessage', data)
   })
