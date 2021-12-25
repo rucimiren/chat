@@ -14,7 +14,12 @@
           :rules="[{ required: true, message: '请选择头像' }]"
         >
           <template #input>
-            <van-uploader :max-count="1" v-model="uploader" />
+            <van-uploader
+              :max-count="1"
+              :max-size="2000 * 1024"
+              @oversize="onOversize"
+              v-model="uploader"
+            />
           </template>
         </van-field>
       </van-cell-group>
@@ -57,6 +62,10 @@ export default {
         avatar: values.uploader[0].content,
       }
       window.socket.emit('login', this.chatUserInfo)
+    },
+    onOversize(file) {
+      console.log(file)
+      this.$toast.fail('文件大小不能超过 2M')
     },
     loginError() {
       window.socket.on('loginError', () => {

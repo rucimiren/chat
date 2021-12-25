@@ -127,7 +127,7 @@ export default {
       window.socket.on('receiveMessage', async data => {
         await this.$nextTick()
         data.message = data.message.replace(/\n/g, '<br/>')
-        console.log(data)
+        // console.log(data)
         // 判断消息是否是自己发送的
         if (data.username === this.chatUserInfo.username) {
           // 自己发送的消息

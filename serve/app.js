@@ -32,6 +32,7 @@ io.on('connection', socket => {
     console.log(data.username, 'login')
     // 判断该用户是否已经存在了
     const user = users.find(item => item.username === data.username)
+    users.forEach(item => console.log(item.username))
     if (user) {
       // 如果user存在
       // 提示浏览器登录失败
