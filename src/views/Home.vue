@@ -96,13 +96,6 @@
 </template>
 
 <script>
-// import io from 'socket.io/client-dist/socket.io.js'
-// const io = require('socket.io/client-dist/socket.io.js')
-// const socket = io('http://10.13.156.112:3000')
-// socket.on('news', function (data) {
-//   console.log(data)
-//   socket.emit('my other event', { my: 'data' })
-// })
 export default {
   name: 'home',
   data() {
@@ -135,8 +128,6 @@ export default {
           console.log(this.$refs.chatMessageBox)
           // 自己发送的消息
           const child = document.createElement('div')
-          // ['flex', 'py-8','w-10/12','self-end']
-          // child.classList.add('flex py-8 w-10/12 self-end')
           child.setAttribute('class', 'flex py-8 w-10/12 self-end')
           child.innerHTML = `
             <div class="mr-8 flex-1">
@@ -160,29 +151,6 @@ export default {
             </div>
           `
           this.$refs.chatMessageBox.appendChild(child)
-          /* this.$refs.chatMessageBox.appendChild(`
-            <div class="flex py-8 w-10/12 self-end">
-              <div class="mr-8">
-                <div class="text-14 text-black-f65 text-right">小明小花</div>
-                <div
-                  class="text-18 bg-white mt-4 pr-4 pl-6 py-6 rounded-2 relative break-all shadow-sm"
-                >
-                  <van-icon
-                    name="play"
-                    class="absolute text-12 -right-8 top-6 text-white"
-                  />
-                  ${data.msg}
-                </div>
-              </div>
-              <div class="">
-                <img
-                  class="w-40 h-40 rounded-4"
-                  src="//storage.360buyimg.com/activity-static/jxd/both-year/h5-bg.png"
-                  alt=""
-                />
-              </div>
-            </div>
-          `) */
         } else {
           console.log('别人的')
           this.$refs.chatMessageBox.appendChild(`

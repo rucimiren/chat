@@ -5,19 +5,9 @@ import store from './store'
 import 'lib-flexible/flexible'
 import 'tailwindcss/utilities.css'
 import '@/assets/css/index.css'
-/* import VueSocketIO from 'vue-socket.io'
-Vue.use(
-  new VueSocketIO({
-    // debug: true,
-    // 服务器端地址
-    connection: 'http://10.13.156.112:3000',
-    // connection: '/socket.io',
-    // vuex: {},
-  }),
-) */
-const io = require('socket.io-client/dist/socket.io')
-window.socket = io('http://10.13.156.112:3000')
-// window.socket = io('/socket.io')
+// 连接socket
+const io = require('socket.io/client-dist/socket.io.js')
+window.socket = io('http://localhost:3000')
 
 import { Button, NavBar, Icon, Field, Cell, CellGroup, Form } from 'vant'
 
