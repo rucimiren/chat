@@ -67,6 +67,7 @@ io.on('connection', socket => {
       username: socket.username,
       avatar: socket.avatar,
     })
+    console.log(socket.username, 'disconnect')
     // 如果离线了，删除对应的用户
     let idx = users.findIndex(item => item.username === socket.username)
     users.splice(idx, 1)

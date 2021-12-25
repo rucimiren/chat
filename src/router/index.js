@@ -48,6 +48,7 @@ router.beforeEach(async (to, from, next) => {
             message: '检测到有登录信息，可直接聊天',
             duration: 3000,
           })
+          next()
         })
         window.socket.on('loginError', () => {
           Toast({
@@ -56,12 +57,11 @@ router.beforeEach(async (to, from, next) => {
             duration: 3000,
             onOpened: () => {
               next('/login')
-              return
             },
           })
-          return
         })
         window.socket.emit('login', JSON.parse(chatUserInfo))
+        return
       }
     }
   }
