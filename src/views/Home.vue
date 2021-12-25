@@ -16,7 +16,7 @@
       class="chat-message-box flex-1 overflow-auto text-30 px-10 flex flex-col"
     >
       <!-- your message start -->
-      <div class="flex py-8" style="max-width: 83.333%">
+      <div class="chat-message-box-your" style="display: none">
         <div class="">
           <img
             class="w-40 h-40 rounded-4"
@@ -27,29 +27,29 @@
         <div class="ml-8">
           <div class="text-14 text-black-f65">小明小花</div>
           <div
-            class="text-18 bg-white mt-4 pl-4 pr-6 py-6 rounded-2 relative break-all shadow-sm"
+            class="text-18 bg-white mt-4 pl-4 pr-8 py-6 rounded-2 relative break-all shadow-sm min-h-32"
           >
             <van-icon
               name="play"
               class="absolute text-12 transform rotate-180 -left-8 top-6 text-white"
             />
-            小明小花小明
+            小明小花小明小明小花小明小明小花小明小明小花小明
           </div>
         </div>
       </div>
       <!-- your message end -->
       <!-- user message start -->
-      <div class="flex py-8 self-end" style="max-width: 83.333%">
+      <div class="chat-message-box-user" style="display: none">
         <div class="mr-8 flex-1">
           <div class="text-14 text-black-f65 text-right">小明小花</div>
           <div
-            class="text-18 bg-white mt-4 pr-4 pl-6 py-6 rounded-2 relative break-all shadow-sm text-right"
+            class="text-18 bg-white mt-4 pr-4 pl-8 py-6 rounded-2 relative break-all shadow-sm min-h-32"
           >
             <van-icon
               name="play"
               class="absolute text-12 -right-8 top-6 text-white"
             />
-            小明小花小明小小
+            小明小花小明小小小明小花小明小小小明小花小明小
           </div>
         </div>
         <div class="">
@@ -65,22 +65,14 @@
 
     <div class="chat-footer">
       <van-cell-group>
-        <van-field
-          autosize
-          v-model="message"
-          type="textarea"
-          @focus="textareaFocus"
-          @blur="textareaBlur"
-          @input="textareaInput"
-        >
+        <van-field>
           <template #left-icon>
             <van-icon name="smile-o" class="text-26 text-black-f85 -mt-3" />
+          </template>
+          <template #right-icon v-if="!message">
             <van-icon name="add-o" class="text-24 text-black-f85" />
           </template>
-          <!-- <template #right-icon>
-            <van-icon name="add-o" class="text-24 text-black-f85" />
-          </template> -->
-          <template #button>
+          <template #button v-else>
             <van-button
               @click="sendMessage"
               size="small"
@@ -89,6 +81,9 @@
               >发送</van-button
             >
           </template>
+          <template #input>
+            <textarea v-model="message" ref="textarea"></textarea>
+          </template>
         </van-field>
       </van-cell-group>
     </div>
@@ -96,6 +91,7 @@
 </template>
 
 <script>
+import autosize from 'autosize'
 export default {
   name: 'home',
   data() {
@@ -105,41 +101,32 @@ export default {
   },
   async created() {
     await this.$nextTick()
-    const vanFieldControl = document.querySelector('.van-field__control')
-    vanFieldControl.style = ''
-    console.log(window.socket, 'window.socket')
+    // console.log(window.socket, 'window.socket')
     this.init()
+    autosize(this.$refs.textarea)
   },
   methods: {
     init() {
-      //接收服务端的信息
-      window.socket.on('news', data => {
-        console.log(data)
-      })
-
       this.receiveMessage()
     },
     receiveMessage() {
-      window.socket.on('receiveMessage', data => {
-        console.log(data, 'receiveMessage')
+      window.socket.on('receiveMessage', async data => {
+        await this.$nextTick()
+        data.message = data.message.replace(/\n/g, '<br/>')
+        console.log(data)
         // 判断消息是否是自己发送的
         if (data.username === this.username) {
-          console.log('自己发送的')
-          console.log(this.$refs.chatMessageBox)
           // 自己发送的消息
           const child = document.createElement('div')
-          child.setAttribute('class', 'flex py-8 w-10/12 self-end')
+          child.setAttribute('class', 'chat-message-box-user')
           child.innerHTML = `
             <div class="mr-8 flex-1">
               <div class="text-14 text-black-f65 text-right">小明小花</div>
               <div
-                class="text-18 bg-white mt-4 pr-4 pl-6 py-6 rounded-2 relative break-all shadow-sm"
+                class="text-18 bg-white mt-4 pr-4 pl-8 py-6 rounded-2 relative break-all shadow-sm min-h-32"
               >
-                <van-icon
-                  name="play"
-                  class="absolute text-12 -right-8 top-6 text-white"
-                ></van-icon>
-                ${data.msg}
+                <i class="absolute text-12 -right-8 top-6 text-white van-icon van-icon-play"></i>
+                ${data.message}
               </div>
             </div>
             <div class="">
@@ -152,32 +139,29 @@ export default {
           `
           this.$refs.chatMessageBox.appendChild(child)
         } else {
-          console.log('别人的')
-          this.$refs.chatMessageBox.appendChild(`
-            <div class="flex py-8 w-10/12">
-              <div class="">
-                <img
-                  class="w-40 h-40 rounded-4"
-                  src="//storage.360buyimg.com/activity-static/jxd/both-year/h5-bg.png"
-                  alt=""
-                />
-              </div>
-              <div class="ml-8">
-                <div class="text-14 text-black-f65">小明小花</div>
-                <div
-                  class="text-18 bg-white mt-4 pl-4 pr-6 py-6 rounded-2 relative break-all shadow-sm"
-                >
-                  <van-icon
-                    name="play"
-                    class="absolute text-12 transform rotate-180 -left-8 top-6 text-white"
-                  />
-                  ${data.msg}
-                </div>
+          // 别人发送的消息
+          const child = document.createElement('div')
+          child.setAttribute('class', 'chat-message-box-your')
+          child.innerHTML = `
+            <div class="">
+              <img
+                class="w-40 h-40 rounded-4"
+                src="//storage.360buyimg.com/activity-static/jxd/both-year/h5-bg.png"
+                alt=""
+              />
+            </div>
+            <div class="ml-8">
+              <div class="text-14 text-black-f65">小明小花</div>
+              <div
+                class="text-18 bg-white mt-4 pl-4 pr-8 py-6 rounded-2 relative break-all shadow-sm min-h-32"
+              >
+                <i class="absolute text-12 transform rotate-180 -left-8 top-6 text-white van-icon van-icon-play"></i>
+                ${data.message}
               </div>
             </div>
-          `)
+          `
+          this.$refs.chatMessageBox.appendChild(child)
         }
-        console.log('下面')
         this.$refs.chatMessageBox.lastElementChild.scrollIntoView(false)
       })
     },
@@ -189,50 +173,51 @@ export default {
         window.socket.emit('chatMessage', {
           // username: username,
           // avatar: avatar,
-          msg: message,
+          message,
         })
       }
+      // autosize.js api 更新 textarea 高度  不管哪种都要写上 this.$refs.textarea.value = ''
+      this.$refs.textarea.value = ''
+      autosize.update(this.$refs.textarea)
+      // 原生js事件触发 更新 textarea 高度
+      // const inputEvent = new Event('input')
+      // this.$refs.textarea.dispatchEvent(inputEvent)
     },
     onClickRight() {
       console.log('按钮')
     },
-    // 获取焦点
-    textareaFocus() {
-      this.setTextarea()
-    },
-    // 失去焦点
-    textareaBlur() {
-      this.setTextarea()
-    },
-    // 变化
-    async textareaInput() {
-      await this.$nextTick()
-      this.$refs.chatMessageBox.lastElementChild.scrollIntoView(false)
-
-      if (this.message === '') {
-        this.setTextarea()
-      }
-    },
-    // 主要用于控制textarea文本框高度
-    async setTextarea() {
-      await this.$nextTick()
-      const vanFieldControl = document.querySelector('.van-field__control')
-      vanFieldControl.style = ''
-    },
   },
 }
 </script>
+<style>
+.min-h-32 {
+  min-height: 32px;
+}
+.chat-message-box-user {
+  display: flex;
+  padding: 8px 0;
+  align-self: end;
+  max-width: 83.3333%;
+}
+.chat-message-box-your {
+  display: flex;
+  padding: 8px 0;
+  max-width: 83.3333%;
+}
+</style>
 <style lang="less" scoped>
 .chat,
 .chat-message-box,
 .chat-footer,
 /deep/ .van-cell,
 /deep/ .van-nav-bar--fixed {
-  // background: rgb(253, 253, 253);
   background: rgba(240, 240, 240);
 }
-.chat-footer {
-  min-height: 46px;
+.chat-footer,
+/deep/ .van-cell-group,
+/deep/ .van-cell {
+  min-height: 56px;
+  align-items: center;
 }
 /deep/ .van-cell-group {
   box-shadow: 4px 0 2px rgba(0, 0, 0, 0.15);
@@ -253,15 +238,19 @@ export default {
 .van-hairline--bottom::after {
   border-width: 0;
 }
-/deep/ .van-field__control {
+/deep/ .van-field__control textarea {
   background: #fff;
   border-radius: 4px;
   box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.15),
     inset 1px 1px 2px rgba(0, 0, 0, 0.15);
   padding: 0 4px;
-  min-height: 26px;
+  min-height: 34px;
   max-height: 80px;
+  width: 100%;
   height: 26px;
+  resize: none;
+  font-size: 20px;
+  padding-top: 4px;
 }
 /deep/ .van-field__left-icon {
   display: flex;

@@ -1,12 +1,6 @@
-/* const app = require('express')()
+const app = require('express')()
 const server = require('http').Server(app)
-const io = require('socket.io')(server)
-
-server.listen(3000) */
-
-var app = require('express')()
-var server = require('http').Server(app)
-var io = require('socket.io')(server, {
+const io = require('socket.io')(server, {
   cors: {
     origin: '*',
   },
@@ -33,10 +27,6 @@ app.get('/', (req, res) => {
 
 io.on('connection', socket => {
   // console.log(socket)
-  socket.emit('news', { hello: 'world' })
-  socket.on('my other event', function (data) {
-    console.log(data, 'event')
-  })
   // 注册登录事件
   socket.on('login', data => {
     // 判断该用户是否已经存在了
