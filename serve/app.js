@@ -34,8 +34,7 @@ io.on('connection', socket => {
     const user = users.find(item => item.username === data.username)
     users.forEach(item => console.log(item.username))
     if (user) {
-      // 如果user存在
-      // 提示浏览器登录失败
+      // 如果user存在 提示登录失败
       socket.emit('loginError')
     } else {
       // 将用户给保存起来
@@ -43,7 +42,7 @@ io.on('connection', socket => {
       socket.username = data.username
       socket.avatar = data.avatar
 
-      // 提示浏览器登录成功了
+      // 提示登录成功了
       socket.emit('loginSuccess', data)
 
       // 广播给所有的用户，有人加入了聊天室
@@ -77,7 +76,7 @@ io.on('connection', socket => {
     // 如果离线了，删除对应的用户
     let idx = users.findIndex(item => item.username === socket.username)
     users.splice(idx, 1)
-    io.emit('userList', users)
+    io.emit('userListChange', users)
   })
 
   // 处理图片请求

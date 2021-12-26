@@ -1,7 +1,7 @@
 <template>
   <div class="chat w-full h-screen overflow-hidden pt-46 flex flex-col">
     <van-nav-bar
-      title="聊天室"
+      :title="title"
       @click-right="navBarRight"
       fixed
       border
@@ -111,12 +111,23 @@ export default {
         username: '',
         avatar: '',
       },
+      userlist: [],
     }
   },
+  computed: {
+    title() {
+      return `聊天室(${this.userlist.length})`
+    },
+  },
+
   async created() {
     await this.$nextTick()
     this.init()
     autosize(this.$refs.textarea)
+  },
+  async activated() {
+    await this.$nextTick()
+    this.getChatUserInfo()
   },
   methods: {
     init() {
@@ -124,6 +135,8 @@ export default {
       this.receiveMessage()
       this.addUser()
       this.delUser()
+      this.getUserList()
+      this.userlistChange()
     },
     // 监听聊天信息
     receiveMessage() {
@@ -206,6 +219,12 @@ export default {
           this.chatMessageBoxAppend(child)
         }
       })
+    },
+    getUserList() {
+      window.socket.emit('getUserList')
+    },
+    userlistChange() {
+      window.socket.on('userListChange', data => (this.userlist = data))
     },
     // 添加消息并滚动到底部
     chatMessageBoxAppend(child) {

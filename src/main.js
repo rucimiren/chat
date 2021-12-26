@@ -24,14 +24,24 @@ import {
   Uploader,
   Toast,
   Image,
+  Popup,
 } from 'vant'
 
 // 常用的组件
-;[Button, NavBar, Icon, Field, Cell, CellGroup, Form, Uploader, Image].forEach(
-  comp => {
-    Vue.component(comp.name, comp)
-  },
-)
+;[
+  Button,
+  NavBar,
+  Icon,
+  Field,
+  Cell,
+  CellGroup,
+  Form,
+  Uploader,
+  Image,
+  Popup,
+].forEach(comp => {
+  Vue.component(comp.name, comp)
+})
 Vue.prototype.$toast = Toast
 
 Vue.config.productionTip = false

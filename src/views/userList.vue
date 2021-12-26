@@ -1,5 +1,6 @@
 <template>
-  <div class="h-screen overflow-auto bg-black-f4 text-20">
+  <div class="h-screen overflow-auto bg-black-f4 text-20 pt-46">
+    <van-nav-bar :title="title" fixed border safe-area-inset-top> </van-nav-bar>
     <div class="flex bg-white pt-6 flex-wrap">
       <div
         v-for="v in userlist"
@@ -21,7 +22,18 @@
         </div>
       </div>
     </div>
-    <div class="mt-16">
+
+    <van-cell-group class="mt-12">
+      <van-cell
+        size="large"
+        title="更换昵称"
+        :value="chatUserInfo.username"
+        is-link
+      />
+      <van-cell size="large" title="单元格" value="内容" />
+    </van-cell-group>
+
+    <div class="mt-12">
       <van-button class="text-20" to="/" round size="large" type="info"
         >返回聊天</van-button
       >
@@ -36,17 +48,36 @@ export default {
   data() {
     return {
       userlist: [],
+      chatUserInfo: {
+        username: '',
+        avatar: '',
+      },
     }
+  },
+
+  computed: {
+    title() {
+      return `聊天信息(${this.userlist.length})`
+    },
   },
 
   created() {
     this.init()
   },
 
+  activated() {
+    this.getChatUserInfo()
+  },
+
   methods: {
     init() {
       this.getUserList()
       this.userlistChange()
+    },
+    // 获取用户信息
+    getChatUserInfo() {
+      const chatUserInfo = window.localStorage.getItem('chatUserInfo')
+      this.chatUserInfo = JSON.parse(chatUserInfo)
     },
     getUserList() {
       window.socket.emit('getUserList')
@@ -70,4 +101,16 @@ export default {
 }
 </script>
 
-<style lang="less" scoped></style>
+<style lang="less" scoped>
+/deep/ .van-nav-bar__title {
+  font-size: 22px;
+}
+/deep/ .van-nav-bar {
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
+}
+/deep/ .van-nav-bar--fixed {
+  max-width: 375px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+</style>
