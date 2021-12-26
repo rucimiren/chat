@@ -70,11 +70,4 @@ export default {
 }
 </script>
 
-<style lang="less" scoped>
-/deep/ .van-grid-item__text {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  z-index: 999999;
-}
-</style>
+<style lang="less" scoped></style>
