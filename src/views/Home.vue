@@ -2,7 +2,7 @@
   <div class="chat w-full h-screen overflow-hidden pt-46 flex flex-col">
     <van-nav-bar
       title="聊天室"
-      @click-right="onClickRight"
+      @click-right="navBarRight"
       fixed
       border
       safe-area-inset-top
@@ -52,7 +52,7 @@
               name="play"
               class="absolute text-12 -right-8 top-6 text-white"
             />
-            <!-- 小明小花小明小小小明小花小明小小小明小花小明小 ni -->
+            小明小花小明小小小明
           </div>
         </div>
         <div class="">
@@ -65,7 +65,7 @@
       </div>
       <!-- user message end -->
       <!-- login and logout message start -->
-      <div>
+      <div style="display: none">
         <span class="text-16 block py-4 text-center text-gray-7"
           >user已上线群聊</span
         >
@@ -122,16 +122,17 @@ export default {
     init() {
       this.getChatUserInfo()
       this.receiveMessage()
+      this.addUser()
+      this.delUser()
     },
+    // 监听聊天信息
     receiveMessage() {
       window.socket.on('receiveMessage', async data => {
         await this.$nextTick()
         data.message = data.message.replace(/\n/g, '<br/>')
-        // console.log(data)
-        // 判断消息是否是自己发送的
+        const child = document.createElement('div')
         if (data.username === this.chatUserInfo.username) {
           // 自己发送的消息
-          const child = document.createElement('div')
           child.setAttribute('class', 'chat-message-box-user')
           child.innerHTML = `
             <div class="mr-8 flex-1 text-right">
@@ -151,10 +152,8 @@ export default {
               />
             </div>
           `
-          this.$refs.chatMessageBox.appendChild(child)
         } else {
           // 别人发送的消息
-          const child = document.createElement('div')
           child.setAttribute('class', 'chat-message-box-your')
           child.innerHTML = `
             <div class="">
@@ -174,17 +173,51 @@ export default {
               </div>
             </div>
           `
-          this.$refs.chatMessageBox.appendChild(child)
         }
-        this.$refs.chatMessageBox.lastElementChild.scrollIntoView(false)
+        this.chatMessageBoxAppend(child)
       })
     },
+    // 监听用户上线
+    addUser() {
+      window.socket.on('addUser', async data => {
+        await this.$nextTick()
+        if (data.username !== this.chatUserInfo.username) {
+          const child = document.createElement('div')
+          child.innerHTML = `
+            <span class="text-16 block py-4 text-center text-gray-7"
+              >${data.username}已上线群聊</span
+            >
+          `
+          this.chatMessageBoxAppend(child)
+        }
+      })
+    },
+    // 监听用户下线
+    delUser() {
+      window.socket.on('delUser', async data => {
+        await this.$nextTick()
+        if (data.username !== this.chatUserInfo.username) {
+          const child = document.createElement('div')
+          child.innerHTML = `
+            <span class="text-16 block py-4 text-center text-gray-7"
+              >${data.username}已退出群聊</span
+            >
+          `
+          this.chatMessageBoxAppend(child)
+        }
+      })
+    },
+    // 添加消息并滚动到底部
+    chatMessageBoxAppend(child) {
+      this.$refs.chatMessageBox.appendChild(child)
+      this.$refs.chatMessageBox.lastElementChild.scrollIntoView(false)
+    },
+    // 发送按钮
     sendMessage() {
       if (this.message) {
         // 发送给socket服务器
         const message = this.message
         this.message = ''
-        console.log(window.socket)
         window.socket.emit('chatMessage', {
           ...this.chatUserInfo,
           message,
@@ -197,9 +230,10 @@ export default {
       // const inputEvent = new Event('input')
       // this.$refs.textarea.dispatchEvent(inputEvent)
     },
-    onClickRight() {
-      console.log('按钮')
+    navBarRight() {
+      this.$router.push('/userList')
     },
+    // 获取用户信息
     getChatUserInfo() {
       const chatUserInfo = window.localStorage.getItem('chatUserInfo')
       this.chatUserInfo = JSON.parse(chatUserInfo)
@@ -214,7 +248,7 @@ export default {
 .chat-message-box-user {
   display: flex;
   padding: 8px 0;
-  align-self: end;
+  align-self: flex-end;
   max-width: 83.3333%;
 }
 .chat-message-box-your {

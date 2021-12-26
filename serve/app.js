@@ -50,8 +50,14 @@ io.on('connection', socket => {
       io.emit('addUser', data)
 
       // 广播给所有用户，用户数据发生改变
-      io.emit('userList', users)
+      io.emit('userListChange', users)
     }
+  })
+
+  // 在线用户数据
+  socket.on('getUserList', () => {
+    // 直接广播给所有人
+    io.emit('userListChange', users)
   })
 
   // 处理聊天请求

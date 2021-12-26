@@ -28,6 +28,12 @@ const routes = [
     component: () =>
       import(/* webpackChunkName: "login" */ '../views/login.vue'),
   },
+  {
+    path: '/userList',
+    name: 'userList',
+    component: () =>
+      import(/* webpackChunkName: "userList" */ '../views/userList.vue'),
+  },
 ]
 
 const router = new VueRouter({
@@ -36,14 +42,15 @@ const router = new VueRouter({
 
 router.beforeEach(async (to, from, next) => {
   document.title = '肖肖'
+  const chatUserInfo = window.localStorage.getItem('chatUserInfo')
   if (to.path !== '/login') {
-    const chatUserInfo = window.localStorage.getItem('chatUserInfo')
     if (!chatUserInfo) {
       next('/login')
       return
     } else {
       if (!window.chat_user_id) {
         window.socket.on('loginSuccess', () => {
+          window.chat_user_id = true
           Toast.success({
             message: '检测到有登录信息，可直接聊天',
             duration: 3000,
@@ -63,9 +70,22 @@ router.beforeEach(async (to, from, next) => {
         window.socket.emit('login', JSON.parse(chatUserInfo))
         return
       }
+      next()
+    }
+  } else {
+    if (!chatUserInfo) {
+      next()
+    } else {
+      Toast({
+        type: 'success',
+        message: '检测到有登录信息，可直接聊天',
+        duration: 3000,
+        onOpened: () => {
+          next('/')
+        },
+      })
     }
   }
-  next()
 })
 
 export default router
