@@ -13,7 +13,7 @@
     </van-nav-bar>
     <div
       ref="chatMessageBox"
-      class="chat-message-box flex-1 overflow-auto text-30 px-10 flex flex-col"
+      class="chat-message-box flex-1 overflow-auto px-10 flex flex-col"
     >
       <!-- your message start -->
       <div class="chat-message-box-your" style="display: none">
@@ -27,25 +27,32 @@
         </div>
         <div class="ml-8">
           <div class="text-14 text-black-f65">小明小花小明小花</div>
-          <div
+          <!-- <div
             class="text-18 inline-block bg-white mt-4 pl-4 pr-8 py-6 rounded-2 relative break-all shadow-sm min-h-32"
           >
             <van-icon
               name="play"
               class="absolute text-12 transform rotate-180 -left-8 top-6 text-white"
             />
-            <!-- 小明小花小明小明小花小明小明小花小明小明小花小明 -->
-            ni
+            小明小花小明小明小花小明小明小花小明小明小花小明
+          </div> -->
+          <div class="inline-block mt-4 rounded-2 shadow-sm">
+            <img
+              width="100%"
+              class="block"
+              src="//storage.360buyimg.com/activity-static/jxd/both-year/h5-groud-bg.png"
+              alt=""
+            />
           </div>
         </div>
       </div>
       <!-- your message end -->
       <!-- user message start -->
       <div class="chat-message-box-user" style="display: none">
-        <!-- <div class="chat-message-box-user" style=""> -->
+        <!-- <div class="chat-message-box-user"> -->
         <div class="mr-8 flex-1 text-right">
           <div class="text-14 text-black-f65">小明小花小明小花</div>
-          <div
+          <!-- <div
             class="inline-block text-18 bg-white mt-4 text-left pr-4 pl-8 py-6 rounded-2 relative break-all shadow-sm min-h-32"
           >
             <van-icon
@@ -53,6 +60,14 @@
               class="absolute text-12 -right-8 top-6 text-white"
             />
             小明小花小明小小小明
+          </div> -->
+          <div class="inline-block mt-4 rounded-2 shadow-sm">
+            <img
+              width="100%"
+              class="block"
+              src="//storage.360buyimg.com/activity-static/jxd/both-year/68.png"
+              alt=""
+            />
           </div>
         </div>
         <div class="">
@@ -80,7 +95,16 @@
             <van-icon name="smile-o" class="text-26 text-black-f85 -mt-3" />
           </template>
           <template #right-icon v-if="!message">
-            <van-icon name="add-o" class="text-24 text-black-f85" />
+            <!-- <van-icon name="add-o" class="text-24 text-black-f85" /> -->
+            <van-uploader
+              :max-count="1"
+              :max-size="2000 * 1024"
+              @oversize="onOversize"
+              :after-read="afterRead"
+              class=""
+            >
+              <van-icon name="add-o" class="text-24 text-black-f85" />
+            </van-uploader>
           </template>
           <template #button v-else>
             <van-button
@@ -112,6 +136,7 @@ export default {
         avatar: '',
       },
       userlist: [],
+      // uploader: [],
     }
   },
   computed: {
@@ -133,6 +158,7 @@ export default {
     init() {
       this.getChatUserInfo()
       this.receiveMessage()
+      this.receiveImage()
       this.addUser()
       this.delUser()
       this.getUserList()
@@ -183,6 +209,61 @@ export default {
               >
                 <i class="absolute inline-block text-12 transform rotate-180 -left-8 top-6 text-white van-icon van-icon-play"></i>
                 ${data.message}
+              </div>
+            </div>
+          `
+        }
+        this.chatMessageBoxAppend(child)
+      })
+    },
+    // 监听聊天图片
+    receiveImage() {
+      window.socket.on('receiveImage', async data => {
+        await this.$nextTick()
+        const child = document.createElement('div')
+        if (data.username === this.chatUserInfo.username) {
+          // 自己发送的消息
+          child.setAttribute('class', 'chat-message-box-user')
+          child.innerHTML = `
+            <div class="mr-8 flex-1 text-right">
+              <div class="text-14 text-black-f65 text-right">${data.username}</div>
+              <div class="inline-block mt-4 rounded-2 shadow-sm">
+                <img
+                  width="100%"
+                  class="block"
+                  src=${data.dataUrl}
+                  alt=""
+                />
+              </div>
+            </div>
+            <div class="">
+              <img
+                class="w-40 h-40 rounded-4"
+                src=${data.avatar}
+                alt=""
+              />
+            </div>
+          `
+        } else {
+          // 别人发送的消息
+          child.setAttribute('class', 'chat-message-box-your')
+          child.innerHTML = `
+            <div class="">
+              <img
+                class="w-40 h-40 rounded-4"
+                src=${data.avatar}
+                alt=""
+              />
+            </div>
+            <div class="ml-8">
+              <div class="text-14 text-black-f65">${data.username}</div>
+              <div class="inline-block mt-4 rounded-2 shadow-sm">
+                <img
+                  width="100%"
+                  class="block"
+                  src=${data.dataUrl}
+                  alt=""
+                />
               </div>
             </div>
           `
@@ -251,6 +332,18 @@ export default {
     },
     navBarRight() {
       this.$router.push('/userList')
+    },
+    afterRead(file) {
+      // 此时可以自行将文件上传至服务器
+      // console.log(file)
+      window.socket.emit('sendImage', {
+        ...this.chatUserInfo,
+        dataUrl: file.content,
+      })
+    },
+    onOversize(file) {
+      console.log(file)
+      this.$toast.fail('文件大小不能超过 2M')
     },
     // 获取用户信息
     getChatUserInfo() {
@@ -323,7 +416,8 @@ export default {
   font-size: 20px;
   padding-top: 4px;
 }
-/deep/ .van-field__left-icon {
+/deep/ .van-field__left-icon,
+/deep/ .van-field__right-icon {
   display: flex;
   align-items: center;
 }
