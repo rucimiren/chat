@@ -1,6 +1,6 @@
 <template>
   <div class="h-screen overflow-auto bg-black-f4 text-20 pt-46">
-    <van-nav-bar :title="title" fixed border safe-area-inset-top> </van-nav-bar>
+    <van-nav-bar :title="title" fixed border safe-area-inset-top></van-nav-bar>
     <div class="flex bg-white pt-6 flex-wrap">
       <div
         v-for="v in userlist"
@@ -29,6 +29,7 @@
         title="更换昵称"
         :value="chatUserInfo.username"
         is-link
+        to="/modifyName"
       />
       <van-cell size="large" title="单元格" value="内容" />
     </van-cell-group>

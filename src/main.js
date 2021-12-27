@@ -25,7 +25,7 @@ import {
   Uploader,
   Toast,
   Image,
-  Popup,
+  Loading,
 } from 'vant'
 
 // 常用的组件
@@ -39,7 +39,7 @@ import {
   Form,
   Uploader,
   Image,
-  Popup,
+  Loading,
 ].forEach(comp => {
   Vue.component(comp.name, comp)
 })
