@@ -14,7 +14,8 @@ const io = require('socket.io')(server, {
   next()
 }) */
 
-server.listen(3000)
+// server.listen(3000)
+server.listen(process.env.PORT || 3000)
 
 const users = []
 

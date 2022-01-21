@@ -1,4 +1,5 @@
 module.exports = {
+  publicPath: './',
   productionSourceMap: process.env.NODE_ENV !== 'production', // 生产打包时不输出map文件，增加打包速度
   // px2rem-loader 这个插件转换不了vant，切换成了postcss-pxtorem
   // chainWebpack: config => {
