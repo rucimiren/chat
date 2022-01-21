@@ -38,6 +38,9 @@
           size="large"
           type="info"
           native-type="submit"
+          :loading="submitLoading"
+          loading-type="spinner"
+          loading-text="修改中..."
           >确认修改</van-button
         >
       </div>
@@ -60,12 +63,12 @@ export default {
 
   data() {
     return {
-      userlist: [],
       chatUserInfo: {
         username: '',
         avatar: '',
       },
       username: '',
+      submitLoading: false,
     }
   },
 
@@ -81,7 +84,9 @@ export default {
     validator(val) {
       return val !== this.chatUserInfo.username
     },
-    init() {},
+    init() {
+      this.modifyNameSuccess()
+    },
     // 获取用户信息
     getChatUserInfo() {
       const chatUserInfo = window.localStorage.getItem('chatUserInfo')
@@ -89,8 +94,18 @@ export default {
       this.username = this.chatUserInfo.username
     },
     onSubmit(values) {
-      console.log(values)
-      // window.socket.emit('login', this.chatUserInfo)
+      this.submitLoading = true
+      window.socket.emit('modifyName', {
+        ...this.chatUserInfo,
+        usernameNew: values.username,
+      })
+    },
+    modifyNameSuccess() {
+      window.socket.on('modifyNameSuccess', data => {
+        this.submitLoading = false
+        this.$toast('修改昵称成功')
+        window.localStorage.setItem('chatUserInfo', JSON.stringify(data))
+      })
     },
   },
 }

@@ -38,8 +38,7 @@
           </div> -->
           <div class="inline-block mt-4 rounded-2 shadow-sm">
             <img
-              width="100%"
-              class="block"
+              class="block max-w-full"
               src="//storage.360buyimg.com/activity-static/jxd/both-year/h5-groud-bg.png"
               alt=""
             />
@@ -63,8 +62,7 @@
           </div> -->
           <div class="inline-block mt-4 rounded-2 shadow-sm">
             <img
-              width="100%"
-              class="block"
+              class="block max-w-full"
               src="//storage.360buyimg.com/activity-static/jxd/both-year/68.png"
               alt=""
             />
@@ -81,7 +79,8 @@
       <!-- user message end -->
       <!-- login and logout message start -->
       <div style="display: none">
-        <span class="text-16 block py-4 text-center text-gray-7"
+        <!-- <div> -->
+        <span class="text-16 px-40 block py-4 text-center text-gray-7"
           >user已上线群聊</span
         >
       </div>
@@ -92,7 +91,11 @@
       <van-cell-group>
         <van-field>
           <template #left-icon>
-            <van-icon name="smile-o" class="text-26 text-black-f85 -mt-3" />
+            <van-icon
+              @click="emojiShowhandle"
+              name="smile-o"
+              class="text-26 text-black-f85 -mt-3"
+            />
           </template>
           <template #right-icon v-if="!message">
             <!-- <van-icon name="add-o" class="text-24 text-black-f85" /> -->
@@ -120,6 +123,23 @@
           </template>
         </van-field>
       </van-cell-group>
+      <!-- van-slide-up -->
+      <transition name="van-fade">
+        <div class="h-199" v-if="emojiShow">
+          <VEmojiPicker
+            v-if="emojiShow"
+            class="w-full h-full"
+            :showSearch="false"
+            :dark="false"
+            @select="selectEmoji"
+            :emojisByRow="6"
+            :emojiSize="24"
+            :showCategories="true"
+            :limitFrequently="30"
+            :continuousList="false"
+          />
+        </div>
+      </transition>
     </div>
   </div>
 </template>
@@ -137,6 +157,7 @@ export default {
       },
       userlist: [],
       // uploader: [],
+      emojiShow: false,
     }
   },
   computed: {
@@ -155,6 +176,34 @@ export default {
     this.getChatUserInfo()
   },
   methods: {
+    emojiShowhandle() {
+      this.emojiShow = !this.emojiShow
+    },
+    selectEmoji(emoji) {
+      const textarea = this.$refs.textarea
+      const message = this.message
+      let cursurPosition = -1
+      if (textarea.selectionStart || textarea.selectionStart === 0) {
+        //非IE浏览器
+        cursurPosition = textarea.selectionStart
+      } else {
+        //IE
+        var range = document.selection.createRange()
+        range.moveStart('character', -textarea.value.length)
+        cursurPosition = range.text.length
+      }
+      // console.log(cursurPosition)
+      if (cursurPosition > -1) {
+        this.message =
+          message.slice(0, cursurPosition) +
+          `${emoji.data}` +
+          message.slice(cursurPosition)
+      } else {
+        this.message += emoji.data
+      }
+      textarea.focus()
+      // textarea.setSelectionRange(cursurPosition, cursurPosition)
+    },
     init() {
       this.getChatUserInfo()
       this.receiveMessage()
@@ -229,8 +278,7 @@ export default {
               <div class="text-14 text-black-f65 text-right">${data.username}</div>
               <div class="inline-block mt-4 rounded-2 shadow-sm">
                 <img
-                  width="100%"
-                  class="block"
+                  class="block max-w-full"
                   src=${data.dataUrl}
                   alt=""
                 />
@@ -259,8 +307,7 @@ export default {
               <div class="text-14 text-black-f65">${data.username}</div>
               <div class="inline-block mt-4 rounded-2 shadow-sm">
                 <img
-                  width="100%"
-                  class="block"
+                  class="block max-w-full"
                   src=${data.dataUrl}
                   alt=""
                 />
@@ -278,7 +325,7 @@ export default {
         if (data.username !== this.chatUserInfo.username) {
           const child = document.createElement('div')
           child.innerHTML = `
-            <span class="text-16 block py-4 text-center text-gray-7"
+            <span class="text-16 px-40 block py-4 text-center text-gray-7"
               >${data.username}已上线群聊</span
             >
           `
@@ -293,7 +340,7 @@ export default {
         if (data.username !== this.chatUserInfo.username) {
           const child = document.createElement('div')
           child.innerHTML = `
-            <span class="text-16 block py-4 text-center text-gray-7"
+            <span class="text-16 px-40 block py-4 text-center text-gray-7"
               >${data.username}已退出群聊</span
             >
           `
@@ -329,6 +376,7 @@ export default {
       // 原生js事件触发 更新 textarea 高度
       // const inputEvent = new Event('input')
       // this.$refs.textarea.dispatchEvent(inputEvent)
+      this.emojiShow = false
     },
     navBarRight() {
       this.$router.push('/userList')
@@ -383,6 +431,10 @@ export default {
   min-height: 56px;
   align-items: center;
 }
+/deep/ .van-cell {
+  overflow: visible;
+}
+
 /deep/ .van-cell-group {
   box-shadow: 4px 0 2px rgba(0, 0, 0, 0.15);
 }
@@ -420,5 +472,16 @@ export default {
 /deep/ .van-field__right-icon {
   display: flex;
   align-items: center;
+}
+
+/deep/ .emoji-picker {
+  display: inline !important;
+  border: none !important;
+}
+/deep/ #Categories {
+  height: 42px;
+}
+/deep/ .container-emoji {
+  height: 157px !important;
 }
 </style>

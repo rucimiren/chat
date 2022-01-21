@@ -66,6 +66,23 @@ io.on('connection', socket => {
     io.emit('receiveMessage', data)
   })
 
+  // 处理图片请求
+  socket.on('sendImage', data => {
+    // 直接广播给所有人
+    io.emit('receiveImage', data)
+  })
+
+  // 修改昵称
+  socket.on('modifyName', data => {
+    users.forEach(item => {
+      if (item.username === data.username) {
+        item.username = data.usernameNew
+        io.emit('modifyNameSuccess', item)
+      }
+    })
+    // 直接广播给所有人更新昵称
+    io.emit('userListChange', users)
+  })
   // 离线处理
   socket.on('disconnect', () => {
     io.emit('delUser', {
@@ -77,11 +94,5 @@ io.on('connection', socket => {
     let idx = users.findIndex(item => item.username === socket.username)
     users.splice(idx, 1)
     io.emit('userListChange', users)
-  })
-
-  // 处理图片请求
-  socket.on('sendImage', data => {
-    // 直接广播给所有人
-    io.emit('receiveImage', data)
   })
 })

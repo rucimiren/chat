@@ -13,6 +13,7 @@
     "js-cookie": "^3.0.1",
     "lib-flexible": "^0.3.2",
     "socket.io": "^4.4.0",
+    "v-emoji-picker": "^2.3.3",
     "vant": "^2.12.37",
     "vue": "^2.6.11",
     "vue-clipboard2": "^0.3.3",
