@@ -72,12 +72,8 @@ export default {
     }
   },
 
-  created() {
-    this.init()
-  },
-
   activated() {
-    this.getChatUserInfo()
+    this.init()
   },
 
   methods: {
@@ -85,6 +81,7 @@ export default {
       return val !== this.chatUserInfo.username
     },
     init() {
+      this.getChatUserInfo()
       this.modifyNameSuccess()
     },
     // 获取用户信息

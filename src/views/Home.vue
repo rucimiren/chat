@@ -166,14 +166,13 @@ export default {
     },
   },
 
-  async created() {
-    await this.$nextTick()
-    this.init()
-    autosize(this.$refs.textarea)
-  },
   async activated() {
     await this.$nextTick()
-    this.getChatUserInfo()
+    if (this.$refs.chatMessageBox) {
+      this.$refs.chatMessageBox.lastElementChild.scrollIntoView(false)
+    }
+    this.init()
+    autosize(this.$refs.textarea)
   },
   methods: {
     emojiShowhandle() {
